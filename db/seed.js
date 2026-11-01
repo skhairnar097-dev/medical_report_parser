@@ -232,117 +232,59 @@ async function seedDatabase() {
             );
         }
 
-        // 4. Insert Authorized Specialist Doctors with Cryptographic Seals
+        // 4. Insert Authorized Specialist Doctors (Mirror of 28 Real Supabase Doctors)
         const doctors = [
-            {
-                id: 'DOC_RATHORE',
-                full_name: 'Dr. Vikramaditya Rathore',
-                qualification: 'MBBS, MD (Medicine), DM (Interventional Cardiology), FACC',
-                specialty_id: 'SPEC_CARDIO',
-                hospital_id: 'HOSP_APEX',
-                license_number: 'NMC-CARD-2012-88419',
-                licensing_authority: 'National Medical Commission (NMC India)',
-                years_experience: 16,
-                verification_status: 'VERIFIED',
-                verification_seal_hash: 'SHA256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069',
-                consultation_fee: 1000,
-                phone: '+91-98220-11234',
-                is_on_duty_emergency: 1,
-                rating: 4.95,
-                bio: 'Senior Interventional Cardiologist with over 4,500 emergency primary angioplasties performed. On-call chief for acute STEMI and coronary intervention at Apex Cath Lab.'
-            },
-            {
-                id: 'DOC_KULKARNI',
-                full_name: 'Dr. Ananya Kulkarni',
-                qualification: 'MBBS, MD (General Medicine), DM (Nephrology), FISN',
-                specialty_id: 'SPEC_NEPHRO',
-                hospital_id: 'HOSP_LIFELINE_RENAL',
-                license_number: 'MMC-NEPH-2015-44290',
-                licensing_authority: 'Maharashtra Medical Council & NMC',
-                years_experience: 12,
-                verification_status: 'VERIFIED',
-                verification_seal_hash: 'SHA256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-                consultation_fee: 900,
-                phone: '+91-98220-22345',
-                is_on_duty_emergency: 1,
-                rating: 4.9,
-                bio: 'Lead Renal Critical Care specialist. Specializes in emergency hemodialysis, CRRT in septic shock, acute glomerulonephritis, and severe toxic nephropathy.'
-            },
-            {
-                id: 'DOC_SEN',
-                full_name: 'Dr. Rajeshwar Sen',
-                qualification: 'MBBS, MS (General Surgery), MCh (Neurosurgery), FINR',
-                specialty_id: 'SPEC_NEURO',
-                hospital_id: 'HOSP_METRO_NEURO',
-                license_number: 'NMC-NEUR-2009-31205',
-                licensing_authority: 'National Medical Commission (NMC India)',
-                years_experience: 18,
-                verification_status: 'VERIFIED',
-                verification_seal_hash: 'SHA256:ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb',
-                consultation_fee: 1200,
-                phone: '+91-98220-33456',
-                is_on_duty_emergency: 1,
-                rating: 4.92,
-                bio: 'Head of Neuro-Trauma and Interventional Stroke Team. Pioneer in acute mechanical thrombectomy for emergency ischemic stroke within golden time windows.'
-            },
-            {
-                id: 'DOC_RAO',
-                full_name: 'Dr. Priyadarshini Rao',
-                qualification: 'MBBS, MD (Pathology / Medicine), DM (Clinical Hematology)',
-                specialty_id: 'SPEC_HEMATO',
-                hospital_id: 'HOSP_CITY_DIVINE',
-                license_number: 'NMC-HEMA-2016-59102',
-                licensing_authority: 'National Medical Commission (NMC India)',
-                years_experience: 11,
-                verification_status: 'VERIFIED',
-                verification_seal_hash: 'SHA256:5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
-                consultation_fee: 850,
-                phone: '+91-98220-44567',
-                is_on_duty_emergency: 1,
-                rating: 4.88,
-                bio: 'Emergency Clinical Hematologist specializing in severe thrombocytopenia, Dengue hemorrhagic fever management, and life-saving therapeutic apheresis.'
-            },
-            {
-                id: 'DOC_MEHTA',
-                full_name: 'Dr. Devendra Mehta',
-                qualification: 'MBBS, MS (General Surgery), DNB (Surgical Gastroenterology)',
-                specialty_id: 'SPEC_SURG_GI',
-                hospital_id: 'HOSP_APEX',
-                license_number: 'MMC-SURG-2011-73911',
-                licensing_authority: 'Maharashtra Medical Council & NMC',
-                years_experience: 15,
-                verification_status: 'VERIFIED',
-                verification_seal_hash: 'SHA256:4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a',
-                consultation_fee: 950,
-                phone: '+91-98220-55678',
-                is_on_duty_emergency: 1,
-                rating: 4.89,
-                bio: 'Chief of Acute Abdominal Surgery & Emergency Trauma. Expert in acute peritonitis, perforated viscus, strangulated hernia, and ruptured appendix interventions.'
-            },
-            {
-                id: 'DOC_SHARMA',
-                full_name: 'Dr. Sanjay Sharma',
-                qualification: 'MBBS, MD (Pulmonary Medicine), DM (Critical Care)',
-                specialty_id: 'SPEC_PULMO',
-                hospital_id: 'HOSP_CITY_DIVINE',
-                license_number: 'NMC-PULM-2014-61023',
-                licensing_authority: 'National Medical Commission (NMC India)',
-                years_experience: 13,
-                verification_status: 'VERIFIED',
-                verification_seal_hash: 'SHA256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b',
-                consultation_fee: 900,
-                phone: '+91-98220-66789',
-                is_on_duty_emergency: 1,
-                rating: 4.87,
-                bio: 'Critical Care Pulmonologist. Specialist in acute hypoxemic respiratory failure, adult respiratory distress syndrome (ARDS), and ECMO circuit monitoring.'
-            }
+            { id: 'DOC_1', full_name: 'Dr. Sudarshan Patil', qualification: 'Liver/Endoscopy', specialty_id: 'SPEC_HEPATO', hospital_id: 'HOSP_APEX', phone: '09975649901', years_experience: 12, rating: 4.5, bio: 'Liver, Endoscopy, and GI specialist.' },
+            { id: 'DOC_2', full_name: 'Dr. Sheetalkumar Hiran', qualification: 'Cardiology', specialty_id: 'SPEC_CARDIO', hospital_id: 'HOSP_APEX', phone: '08042782100', years_experience: 10, rating: 5.0, bio: 'Interventional Cardiologist at Nine Pearls Hospital.' },
+            { id: 'DOC_3', full_name: 'Dr. Ninad Thorat', qualification: 'Neurologist', specialty_id: 'SPEC_NEURO', hospital_id: 'HOSP_METRO_NEURO', phone: '09699783386', years_experience: 18, rating: 4.2, bio: 'Chief Neurologist at KIMS Manavata Hospital.' },
+            { id: 'DOC_4', full_name: 'Dr. Ragesh Patil', qualification: 'Physician/Diabetologist', specialty_id: 'SPEC_GENERAL', hospital_id: 'HOSP_CITY_DIVINE', phone: '04068334455', years_experience: 15, rating: 3.5, bio: 'Consultant Physician & Diabetologist at Medicover Hospital.' },
+            { id: 'DOC_5', full_name: 'Dr. Nitin Kochar', qualification: 'Cardiothoracic & Vascular surgeo', specialty_id: 'SPEC_CARDIO', hospital_id: 'HOSP_APEX', phone: '09372474184', years_experience: 20, rating: 4.9, bio: 'Senior Cardiothoracic & Vascular Surgeon at Six Sigma Hospital.' },
+            { id: 'DOC_6', full_name: 'Dr. Anand Diwan', qualification: 'Neurology', specialty_id: 'SPEC_NEURO', hospital_id: 'HOSP_METRO_NEURO', phone: '02532224400', years_experience: 14, rating: 4.1, bio: 'Neurology Consultant at Narayani Hospital.' },
+            { id: 'DOC_7', full_name: 'Dr. Ajaykumar Jadhav', qualification: 'Onco-surgeon', specialty_id: 'SPEC_SURG_GI', hospital_id: 'HOSP_APEX', phone: '02532224411', years_experience: 19, rating: 4.7, bio: 'Surgical Oncologist at Narayani Hospital.' },
+            { id: 'DOC_8', full_name: 'Dr. Pushkar Borole', qualification: 'Spine Surgeon', specialty_id: 'SPEC_ORTHO', hospital_id: 'HOSP_APEX', phone: '2532224411', years_experience: 13, rating: 4.0, bio: 'Orthopedic Spine Surgeon at Narayani Hospital.' },
+            { id: 'DOC_9', full_name: 'Dr. Shrikant Palekar', qualification: 'Neurosurgeon', specialty_id: 'SPEC_NEURO', hospital_id: 'HOSP_METRO_NEURO', phone: '07276879269', years_experience: 16, rating: 3.9, bio: 'Emergency Neurosurgeon at Prime Hospital.' },
+            { id: 'DOC_10', full_name: 'Dr. lomesh Kapadnis', qualification: 'Urologist', specialty_id: 'SPEC_NEPHRO', hospital_id: 'HOSP_LIFELINE_RENAL', phone: '07715996562', years_experience: 17, rating: 4.6, bio: 'Urology Consultant at Siddhidata urology clinic.' },
+            { id: 'DOC_11', full_name: 'Dr. Mukesh More', qualification: 'ENT Specialist', specialty_id: 'SPEC_ENT', hospital_id: 'HOSP_CITY_DIVINE', phone: '08042755812', years_experience: 14, rating: 4.3, bio: 'ENT Consultant at Omkar Hospital.' },
+            { id: 'DOC_12', full_name: 'Dr. Sandeep Nayak', qualification: 'General Surgeon', specialty_id: 'SPEC_SURG_GI', hospital_id: 'HOSP_APEX', phone: '02536920000', years_experience: 27, rating: 4.1, bio: 'Senior General Surgeon at KIMS Hospital.' },
+            { id: 'DOC_13', full_name: 'Dr. Nanda Rajaneesh', qualification: 'General Surgeon', specialty_id: 'SPEC_SURG_GI', hospital_id: 'HOSP_CITY_DIVINE', phone: '09740588290', years_experience: 31, rating: 4.8, bio: 'Lead General Surgeon at Apollo Spectra Hospital.' },
+            { id: 'DOC_14', full_name: 'Dr. Jaydev Panchawagh', qualification: 'Dermatologist', specialty_id: 'SPEC_DERMA', hospital_id: 'HOSP_CITY_DIVINE', phone: '02532316200', years_experience: 19, rating: 4.7, bio: 'Dermatologist at Magnum Hospitals.' },
+            { id: 'DOC_15', full_name: 'Dr. Ranjit Jadhav', qualification: 'Neurology', specialty_id: 'SPEC_NEURO', hospital_id: 'HOSP_METRO_NEURO', phone: '02532995555', years_experience: 16, rating: 4.8, bio: 'Neurology Consultant at Sankalp Hospital.' },
+            { id: 'DOC_16', full_name: 'Dr. Sachin Mahajan', qualification: 'Pulmonologist', specialty_id: 'SPEC_PULMO', hospital_id: 'HOSP_CITY_DIVINE', phone: '04068334455', years_experience: 14, rating: 4.9, bio: 'Consultant Pulmonologist at Ashoka Hospital.' },
+            { id: 'DOC_17', full_name: 'Dr. Muzammil Ambekar', qualification: 'Endocrinologist', specialty_id: 'SPEC_ENDO', hospital_id: 'HOSP_APEX', phone: '02047138733', years_experience: 11, rating: 4.6, bio: 'Endocrinology Consultant at Sahyadri Hospitals.' },
+            { id: 'DOC_18', full_name: 'Dr. Pradeep Divate', qualification: 'Obstetrician', specialty_id: 'SPEC_GENERAL', hospital_id: 'HOSP_CITY_DIVINE', phone: '02532315050', years_experience: 20, rating: 4.8, bio: 'Senior Obstetrician at NIMS multispeciality Hospital.' },
+            { id: 'DOC_19', full_name: 'Dr. Deepa Divekar', qualification: 'Paediatrics', specialty_id: 'SPEC_PAED', hospital_id: 'HOSP_CITY_DIVINE', phone: '02536639008', years_experience: 18, rating: 4.9, bio: 'Pediatric Specialist at Shatabdi Hospital.' },
+            { id: 'DOC_20', full_name: 'Dr. Hemant Sant', qualification: 'Orthopedist', specialty_id: 'SPEC_ORTHO', hospital_id: 'HOSP_APEX', phone: '09923255509', years_experience: 17, rating: 4.7, bio: 'Orthopedic Surgeon at Sahawas multispeciality Hospital.' },
+            { id: 'DOC_21', full_name: 'Dr. Mangesh Udar', qualification: 'Pulmonologist', specialty_id: 'SPEC_PULMO', hospital_id: 'HOSP_CITY_DIVINE', phone: '02047138733', years_experience: 13, rating: 4.8, bio: 'Pulmonology Specialist at Sahyadri Hospitals.' },
+            { id: 'DOC_22', full_name: 'Dr. Atul D. Sajgure', qualification: 'Nephrologist', specialty_id: 'SPEC_NEPHRO', hospital_id: 'HOSP_LIFELINE_RENAL', phone: '02047138733', years_experience: 15, rating: 4.9, bio: 'Renal Care Specialist & Nephrologist at Sahyadri Hospitals.' },
+            { id: 'DOC_23', full_name: 'Dr. Manan Doshi', qualification: 'Nephrology', specialty_id: 'SPEC_NEPHRO', hospital_id: 'HOSP_LIFELINE_RENAL', phone: '02047138733', years_experience: 10, rating: 4.7, bio: 'Nephrology Consultant at Sahyadri Hospitals.' },
+            { id: 'DOC_24', full_name: 'Dr. Anil Godbole', qualification: 'Hepatologist', specialty_id: 'SPEC_HEPATO', hospital_id: 'HOSP_APEX', phone: '02047138733', years_experience: 19, rating: 4.8, bio: 'Consultant Hepatologist at Sahyadri Hospitals.' },
+            { id: 'DOC_25', full_name: 'Dr. Jaising Shinde', qualification: 'General Surgery', specialty_id: 'SPEC_SURG_GI', hospital_id: 'HOSP_APEX', phone: '02047138733', years_experience: 18, rating: 4.7, bio: 'General Surgeon at Sahyadri Hospitals.' },
+            { id: 'DOC_26', full_name: 'Dr. Sanjay Kolte', qualification: 'Rheumatologist', specialty_id: 'SPEC_GENERAL', hospital_id: 'HOSP_CITY_DIVINE', phone: '02047138733', years_experience: 16, rating: 4.6, bio: 'Rheumatologist at Sahyadri Hospitals.' },
+            { id: 'DOC_27', full_name: 'Dr. Shilpa Naik', qualification: 'General Surgery', specialty_id: 'SPEC_SURG_GI', hospital_id: 'HOSP_APEX', phone: '02047138733', years_experience: 14, rating: 4.8, bio: 'Consultant General Surgeon at Sahyadri Hospitals.' },
+            { id: 'DOC_28', full_name: 'Dr. Satish Malegaonkar', qualification: 'General Surgery', specialty_id: 'SPEC_SURG_GI', hospital_id: 'HOSP_APEX', phone: '02047138733', years_experience: 20, rating: 4.9, bio: 'Senior General Surgeon at Sahyadri Hospitals.' }
         ];
 
         for (const d of doctors) {
             await run(
                 `INSERT INTO doctors (id, full_name, qualification, specialty_id, hospital_id, license_number, licensing_authority, years_experience, verification_status, verification_seal_hash, consultation_fee, phone, is_on_duty_emergency, rating, bio)
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                [d.id, d.full_name, d.qualification, d.specialty_id, d.hospital_id, d.license_number, d.licensing_authority, d.years_experience, d.verification_status, d.verification_seal_hash, d.consultation_fee, d.phone, d.is_on_duty_emergency, d.rating, d.bio]
+                [
+                    d.id,
+                    d.full_name,
+                    d.qualification,
+                    d.specialty_id,
+                    d.hospital_id,
+                    `MMC-2016-${8000 + parseInt(d.id.replace('DOC_', '')) * 133}`,
+                    'State Medical Council & NMC',
+                    d.years_experience,
+                    'VERIFIED',
+                    `SHA256:SEAL-${d.id}`,
+                    800,
+                    d.phone,
+                    1,
+                    d.rating,
+                    d.bio
+                ]
             );
         }
 

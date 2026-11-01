@@ -1,8 +1,27 @@
+const path = require('path');
+const fs = require('fs');
+const dotenv = require('dotenv');
+
+// Auto-discover and load .env
+const envCandidates = [
+    path.join(process.cwd(), '.env'),
+    path.join(__dirname, '.env'),
+    path.join(__dirname, '..', '.env'),
+    path.join(__dirname, '..', '..', '.env')
+];
+for (const envPath of envCandidates) {
+    if (fs.existsSync(envPath)) {
+        dotenv.config({ path: envPath });
+        break;
+    }
+}
+if (!process.env.SUPABASE_URL) {
+    dotenv.config();
+}
+
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 const multer = require('multer');
-const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
 const { db, all, get, run, initializeDatabase, getSupabaseDoctors, saveTriageLog, saveAppointment, getAppointments, getTriageLogs, saveFeedback, getFeedbacks } = require('./db/index');
