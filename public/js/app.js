@@ -1193,6 +1193,175 @@ function setupDropZone() {
     }
 }
 
+// ==============================================================================
+// PATIENT & CAREGIVER FEEDBACK CONTROLLER (DOCTOR & PLATFORM)
+// ==============================================================================
+let currentDocRating = 5;
+let currentPlatRating = 5;
+
+function setDocRating(n) {
+    currentDocRating = n;
+    const input = document.getElementById('feedback-doctor-rating');
+    if (input) input.value = n;
+
+    const stars = document.querySelectorAll('.star-doc');
+    stars.forEach((s, idx) => {
+        if (idx < n) {
+            s.classList.remove('text-slate-300');
+            s.classList.add('text-amber-400');
+        } else {
+            s.classList.remove('text-amber-400');
+            s.classList.add('text-slate-300');
+        }
+    });
+}
+
+function setPlatRating(n) {
+    currentPlatRating = n;
+    const input = document.getElementById('feedback-platform-rating');
+    if (input) input.value = n;
+
+    const stars = document.querySelectorAll('.star-plat');
+    stars.forEach((s, idx) => {
+        if (idx < n) {
+            s.classList.remove('text-slate-300');
+            s.classList.add('text-amber-400');
+        } else {
+            s.classList.remove('text-amber-400');
+            s.classList.add('text-slate-300');
+        }
+    });
+}
+
+function openFeedbackModal() {
+    const modal = document.getElementById('feedback-modal');
+    if (!modal) return;
+
+    // Prefill patient name if available
+    const patientInput = document.getElementById('feedback-patient-name');
+    if (patientInput) {
+        if (AppState.bookedAppointment && AppState.bookedAppointment.patient_name) {
+            patientInput.value = AppState.bookedAppointment.patient_name;
+        } else if (AppState.triageData && AppState.triageData.patientName) {
+            patientInput.value = AppState.triageData.patientName;
+        } else if (AppState.user && AppState.user.name) {
+            patientInput.value = AppState.user.name;
+        }
+    }
+
+    // Prefill doctor name if available
+    const docInput = document.getElementById('feedback-doctor-name');
+    if (docInput) {
+        if (AppState.selectedDoctor && AppState.selectedDoctor.full_name) {
+            docInput.value = AppState.selectedDoctor.full_name;
+        } else if (AppState.bookedAppointment && AppState.bookedAppointment.doctor_name) {
+            docInput.value = AppState.bookedAppointment.doctor_name;
+        }
+    }
+
+    // Prefill token if available
+    const tokenInput = document.getElementById('feedback-token');
+    if (tokenInput && AppState.bookedAppointment && AppState.bookedAppointment.id) {
+        tokenInput.value = AppState.bookedAppointment.id;
+    }
+
+    setDocRating(5);
+    setPlatRating(5);
+
+    modal.classList.remove('hidden');
+    loadRecentFeedbacks();
+}
+
+function closeFeedbackModal() {
+    const modal = document.getElementById('feedback-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function openFeedbackModalFromAppointment() {
+    closeBookingModal();
+    openFeedbackModal();
+}
+
+async function handleFeedbackSubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById('feedback-submit-btn');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Submitting to Supabase...';
+    }
+
+    try {
+        const payload = {
+            patientName: document.getElementById('feedback-patient-name').value.trim(),
+            appointmentId: document.getElementById('feedback-token').value.trim() || null,
+            doctorId: AppState.selectedDoctor ? AppState.selectedDoctor.id : null,
+            doctorName: document.getElementById('feedback-doctor-name').value.trim(),
+            doctorRating: parseInt(document.getElementById('feedback-doctor-rating').value) || 5,
+            doctorReview: document.getElementById('feedback-doctor-review').value.trim(),
+            platformRating: parseInt(document.getElementById('feedback-platform-rating').value) || 5,
+            platformReview: document.getElementById('feedback-platform-review').value.trim()
+        };
+
+        const res = await fetch('/api/feedback/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            showToast('✅ Feedback successfully saved in Supabase database!', 'success');
+            document.getElementById('feedback-doctor-review').value = '';
+            document.getElementById('feedback-platform-review').value = '';
+            loadRecentFeedbacks();
+            setTimeout(() => {
+                closeFeedbackModal();
+            }, 1200);
+        } else {
+            showToast('Error submitting feedback: ' + (data.error || 'Failed'), 'error');
+        }
+    } catch (err) {
+        console.error('Feedback submit error:', err);
+        showToast('Error: ' + err.message, 'error');
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = '✓ Submit Feedback to Supabase';
+        }
+    }
+}
+
+async function loadRecentFeedbacks() {
+    const container = document.getElementById('recent-feedbacks-container');
+    if (!container) return;
+
+    try {
+        const res = await fetch('/api/feedbacks');
+        const data = await res.json();
+
+        if (data.success && data.feedbacks && data.feedbacks.length > 0) {
+            container.innerHTML = data.feedbacks.map(f => `
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-900">${f.patient_name || 'Patient'}</span>
+                        <span class="text-amber-500 font-bold">${'★'.repeat(f.doctor_rating || 5)}${'☆'.repeat(5 - (f.doctor_rating || 5))}</span>
+                    </div>
+                    <div class="text-[11px] text-blue-700 font-semibold">Doctor: ${f.doctor_name}</div>
+                    <p class="text-[11px] text-slate-600 italic">"${f.doctor_review || 'Good treatment experience.'}"</p>
+                    <div class="pt-1 text-[10px] text-emerald-700 font-medium border-t border-slate-100 flex items-center justify-between">
+                        <span>Platform: ${f.platform_rating || 5}/5 ★</span>
+                        <span>${f.created_at ? new Date(f.created_at).toLocaleDateString() : 'Just now'}</span>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<p class="text-slate-400 text-[11px] text-center py-2">No feedbacks recorded yet. Be the first to review!</p>';
+        }
+    } catch (e) {
+        container.innerHTML = '<p class="text-slate-400 text-[11px] text-center py-2">Could not load reviews.</p>';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initAuth();
     setupDropZone();

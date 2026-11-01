@@ -583,6 +583,102 @@ async function getTriageLogs(limit = 50) {
     }
 }
 
+/**
+ * Save Patient & Caregiver Feedback to Supabase (and local DB)
+ */
+async function saveFeedback(data) {
+    let savedToSupabase = false;
+
+    if (supabase) {
+        try {
+            const { error } = await supabase.from('feedbacks').insert([{
+                id: data.id,
+                appointment_id: data.appointment_id || null,
+                patient_name: data.patient_name || 'Anonymous Patient',
+                doctor_id: data.doctor_id || null,
+                doctor_name: data.doctor_name || 'Specialist',
+                doctor_rating: Number(data.doctor_rating) || 5,
+                doctor_review: data.doctor_review || '',
+                platform_rating: Number(data.platform_rating) || 5,
+                platform_review: data.platform_review || ''
+            }]);
+
+            if (error) {
+                console.warn('⚠️ Supabase feedbacks insert error:', error.message);
+            } else {
+                console.log(`☁️ [Supabase Cloud] Feedback saved: ${data.id}`);
+                savedToSupabase = true;
+            }
+        } catch (e) {
+            console.warn('⚠️ Supabase feedbacks exception:', e.message);
+        }
+    }
+
+    // Mirror to local SQLite
+    try {
+        await run(`
+            CREATE TABLE IF NOT EXISTS feedbacks (
+                id TEXT PRIMARY KEY,
+                appointment_id TEXT,
+                patient_name TEXT NOT NULL,
+                doctor_id TEXT,
+                doctor_name TEXT NOT NULL,
+                doctor_rating INTEGER DEFAULT 5,
+                doctor_review TEXT,
+                platform_rating INTEGER DEFAULT 5,
+                platform_review TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        await run(
+            `INSERT INTO feedbacks (id, appointment_id, patient_name, doctor_id, doctor_name, doctor_rating, doctor_review, platform_rating, platform_review)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                data.id,
+                data.appointment_id || null,
+                data.patient_name || 'Anonymous Patient',
+                data.doctor_id || null,
+                data.doctor_name || 'Specialist',
+                Number(data.doctor_rating) || 5,
+                data.doctor_review || '',
+                Number(data.platform_rating) || 5,
+                data.platform_review || ''
+            ]
+        );
+    } catch (dbErr) {
+        // Local error logged silently
+    }
+
+    return savedToSupabase;
+}
+
+/**
+ * Get Feedbacks from Supabase (fallback to local DB)
+ */
+async function getFeedbacks(limit = 50) {
+    if (supabase) {
+        try {
+            const { data, error } = await supabase
+                .from('feedbacks')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(limit);
+
+            if (!error && data) {
+                return data;
+            }
+        } catch (e) {
+            console.warn('⚠️ Supabase feedbacks fetch fallback:', e.message);
+        }
+    }
+
+    try {
+        return await all('SELECT * FROM feedbacks ORDER BY created_at DESC LIMIT ?', [limit]);
+    } catch (e) {
+        return [];
+    }
+}
+
 module.exports = {
     db: sqliteDb,
     pgPool,
@@ -597,5 +693,7 @@ module.exports = {
     saveTriageLog,
     saveAppointment,
     getAppointments,
-    getTriageLogs
+    getTriageLogs,
+    saveFeedback,
+    getFeedbacks
 };

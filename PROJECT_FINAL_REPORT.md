@@ -126,6 +126,7 @@ To ground our project in real user needs, our team distributed a **Google Form S
 4. **Verified Practitioner Verification:** Authenticate specialist doctors against National Medical Commission standards, generating SHA-256 cryptographic verification seals.
 5. **GIS Navigation & Capacity Tracking:** Provide real-time distance calculations, embedded Google Maps turn-by-turn routing, and live ICU bed availability metrics.
 6. **Cloud Database Architecture:** Store all triage logs and confirmed appointment tokens in a real-time Supabase PostgreSQL cloud environment.
+7. **Dual-Loop Post-Treatment Stakeholder Feedback:** Provide a dedicated rating and review interface for patients/relatives post-consultation to evaluate both treating doctor clinical care (1-5 stars) and platform emergency speed/accuracy, persisted in Supabase `feedbacks` table.
 
 ## 3.3 Questionnaire to Stakeholders
 
@@ -219,6 +220,14 @@ The system is engineered as an interactive 4-step responsive workflow:
 │ - Embedded clickable Google Maps navigation window          │
 │ - Generates unique Booking Token (APT-XXXXXX)               │
 │ - Saves booking directly to Supabase `appointments` table   │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 5: POST-TREATMENT DOCTOR & PLATFORM FEEDBACK           │
+│ - Patient rates treating specialist (1-5 stars & recovery)   │
+│ - Patient rates website speed, triage & navigation (1-5 star)│
+│ - Saves review live to Supabase `feedbacks` table           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -233,6 +242,7 @@ The system is engineered as an interactive 4-step responsive workflow:
 | **TC-03** | Dengue Hemorrhagic Thrombocytopenia | Platelets: 16,000 /uL (Ref: 150k - 450k) | **CODE RED**<br>Clinical Hematology | Matched Hematologist; Warned against home remedies / delays | **PASSED (100%)** |
 | **TC-04** | Acute Peritonitis / Ruptured Appendix | WBC (TLC): 22,500 /uL | **CODE RED**<br>Emergency Gastro Surgery | Matched Gastrointestinal Surgeon; Warned against antacids | **PASSED (100%)** |
 | **TC-05** | Annual Wellness Routine Health Checkup | Fasting Sugar: 88 mg/dL; Hb: 14.2 g/dL | **CODE GREEN**<br>General Physician | Stable Triage Level 3; Confirmed normal physiological parameters | **PASSED (100%)** |
+| **TC-06** | Post-Treatment Doctor & Platform Feedback | Token: APT-911026; Dr. Ninad Thorat | Dual 5-Star Rating & Qualitative Reviews | Successfully validated and persisted to Supabase `feedbacks` table | **PASSED (100%)** |
 
 ---
 
@@ -328,3 +338,4 @@ When presenting the project to professors or pasting images in your report:
 4. **Slide / Figure 4:** Step 3 Doctor Cards (showing Dr. Name, Rating, Original Phone Number, and "Book Appointment" button).
 5. **Slide / Figure 5:** Step 4 Booking Modal & Interactive Google Map Route with turn-by-turn navigation.
 6. **Slide / Figure 6:** Supabase Cloud Dashboard screenshot showing rows in `triage_logs` and `appointments` tables.
+

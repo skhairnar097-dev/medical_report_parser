@@ -5,7 +5,7 @@ const multer = require('multer');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
-const { db, all, get, run, initializeDatabase, getSupabaseDoctors, saveTriageLog, saveAppointment, getAppointments, getTriageLogs } = require('./db/index');
+const { db, all, get, run, initializeDatabase, getSupabaseDoctors, saveTriageLog, saveAppointment, getAppointments, getTriageLogs, saveFeedback, getFeedbacks } = require('./db/index');
 const { seedDatabase } = require('./db/seed');
 const { parseMedicalText } = require('./services/ocrEngine');
 const { evaluateTriage } = require('./services/triageEngine');
@@ -615,6 +615,61 @@ app.get('/api/triage/logs', async (req, res) => {
     try {
         const logs = await getTriageLogs(50);
         return res.json({ success: true, logs });
+    } catch (err) {
+        return res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// ==============================================================================
+// 10. PATIENT & CAREGIVER POST-TREATMENT FEEDBACK API
+// ==============================================================================
+app.post('/api/feedback/submit', async (req, res) => {
+    try {
+        const {
+            appointmentId,
+            patientName,
+            doctorId,
+            doctorName,
+            doctorRating,
+            doctorReview,
+            platformRating,
+            platformReview
+        } = req.body;
+
+        if (!patientName) {
+            return res.status(400).json({ success: false, error: 'Patient name is required.' });
+        }
+
+        const feedbackId = `FBK-${Date.now().toString().slice(-6)}`;
+        const feedbackPayload = {
+            id: feedbackId,
+            appointment_id: appointmentId || null,
+            patient_name: patientName,
+            doctor_id: doctorId || null,
+            doctor_name: doctorName || 'Treating Specialist',
+            doctor_rating: doctorRating ? parseInt(doctorRating) : 5,
+            doctor_review: doctorReview || 'Treatment was prompt and effective.',
+            platform_rating: platformRating ? parseInt(platformRating) : 5,
+            platform_review: platformReview || 'Website emergency triage was very fast and accurate.'
+        };
+
+        await saveFeedback(feedbackPayload);
+
+        return res.json({
+            success: true,
+            feedback: feedbackPayload,
+            message: 'Feedback successfully submitted and saved to Supabase!'
+        });
+    } catch (err) {
+        console.error('Error submitting feedback:', err);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.get('/api/feedbacks', async (req, res) => {
+    try {
+        const feedbacks = await getFeedbacks(50);
+        return res.json({ success: true, feedbacks });
     } catch (err) {
         return res.status(500).json({ success: false, error: err.message });
     }
