@@ -1331,7 +1331,7 @@ async function handleFeedbackSubmit(e) {
     const btn = document.getElementById('feedback-submit-btn');
     if (btn) {
         btn.disabled = true;
-        btn.innerText = 'Submitting to Supabase...';
+        btn.innerText = 'Submitting...';
     }
 
     try {
@@ -1370,7 +1370,7 @@ async function handleFeedbackSubmit(e) {
     } finally {
         if (btn) {
             btn.disabled = false;
-            btn.innerText = '✓ Submit Feedback to Supabase';
+            btn.innerText = 'Submit Feedback';
         }
     }
 }
