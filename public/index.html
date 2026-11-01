@@ -959,8 +959,8 @@ Required Specialty: Interventional Cardiology
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-700 mb-1">Doctor Jisse Treatment Li *</label>
-                    <input type="text" id="feedback-doctor-name" required placeholder="Doctor ka naam (e.g. Dr. Ninad Thorat)..."
+                    <label class="block font-bold text-slate-700 mb-1">Treating Specialist Doctor *</label>
+                    <input type="text" id="feedback-doctor-name" required placeholder="Doctor name (e.g. Dr. Ninad Thorat)..."
                         class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition">
                 </div>
 
@@ -970,39 +970,39 @@ Required Specialty: Interventional Cardiology
                         <span class="font-bold text-slate-900 flex items-center space-x-1.5">
                             <span>👨‍⚕️</span> <span>1. Doctor Treatment & Care Rating</span>
                         </span>
-                        <!-- 5 Star selector -->
-                        <div id="doctor-star-group" class="flex items-center space-x-1 select-none">
-                            <button type="button" class="star-doc text-xl text-amber-400 hover:scale-125 transition cursor-pointer" onclick="setDocRating(1)">★</button>
-                            <button type="button" class="star-doc text-xl text-amber-400 hover:scale-125 transition cursor-pointer" onclick="setDocRating(2)">★</button>
-                            <button type="button" class="star-doc text-xl text-amber-400 hover:scale-125 transition cursor-pointer" onclick="setDocRating(3)">★</button>
-                            <button type="button" class="star-doc text-xl text-amber-400 hover:scale-125 transition cursor-pointer" onclick="setDocRating(4)">★</button>
-                            <button type="button" class="star-doc text-xl text-amber-400 hover:scale-125 transition cursor-pointer" onclick="setDocRating(5)">★</button>
+                        <!-- 5 Star selector (Initially Empty / Gray) -->
+                        <div id="doctor-star-group" class="flex items-center space-x-1 select-none" onmouseleave="restoreDocStars()">
+                            <button type="button" class="star-doc text-xl text-slate-300 hover:scale-125 transition cursor-pointer" onclick="setDocRating(1)" onmouseenter="previewDocRating(1)">★</button>
+                            <button type="button" class="star-doc text-xl text-slate-300 hover:scale-125 transition cursor-pointer" onclick="setDocRating(2)" onmouseenter="previewDocRating(2)">★</button>
+                            <button type="button" class="star-doc text-xl text-slate-300 hover:scale-125 transition cursor-pointer" onclick="setDocRating(3)" onmouseenter="previewDocRating(3)">★</button>
+                            <button type="button" class="star-doc text-xl text-slate-300 hover:scale-125 transition cursor-pointer" onclick="setDocRating(4)" onmouseenter="previewDocRating(4)">★</button>
+                            <button type="button" class="star-doc text-xl text-slate-300 hover:scale-125 transition cursor-pointer" onclick="setDocRating(5)" onmouseenter="previewDocRating(5)">★</button>
                         </div>
                     </div>
-                    <input type="hidden" id="feedback-doctor-rating" value="5">
+                    <input type="hidden" id="feedback-doctor-rating" value="0">
                     <textarea id="feedback-doctor-review" rows="2"
-                        placeholder="Doctor ka treatment kaisa raha? Recovery me madad mili? Doctor ka response aur treatment kaisa laga?..."
+                        placeholder="How was the doctor's treatment and clinical advice? Did the patient recover well?..."
                         class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"></textarea>
                 </div>
 
-                <!-- SECTION 2: PLATFORM WEBSITE EXPERIENCE RATING -->
+                <!-- SECTION 2: PLATFORM WEBSITE EXPERIENCE RATING (ENGLISH) -->
                 <div class="p-4 rounded-xl bg-blue-50/60 border border-blue-200 space-y-2.5">
                     <div class="flex items-center justify-between">
                         <span class="font-bold text-blue-950 flex items-center space-x-1.5">
-                            <span>💻</span> <span>2. Hamari Website (Platform) Experience</span>
+                            <span>💻</span> <span>2. Website (Platform) Experience Rating</span>
                         </span>
-                        <!-- Platform Star selector -->
-                        <div id="platform-star-group" class="flex items-center space-x-1 select-none">
-                            <button type="button" class="star-plat text-xl text-amber-400 hover:scale-125 transition cursor-pointer" onclick="setPlatRating(1)">★</button>
-                            <button type="button" class="star-plat text-xl text-amber-400 hover:scale-125 transition cursor-pointer" onclick="setPlatRating(2)">★</button>
-                            <button type="button" class="star-plat text-xl text-amber-400 hover:scale-125 transition cursor-pointer" onclick="setPlatRating(3)">★</button>
-                            <button type="button" class="star-plat text-xl text-amber-400 hover:scale-125 transition cursor-pointer" onclick="setPlatRating(4)">★</button>
-                            <button type="button" class="star-plat text-xl text-amber-400 hover:scale-125 transition cursor-pointer" onclick="setPlatRating(5)">★</button>
+                        <!-- Platform Star selector (Initially Empty / Gray) -->
+                        <div id="platform-star-group" class="flex items-center space-x-1 select-none" onmouseleave="restorePlatStars()">
+                            <button type="button" class="star-plat text-xl text-slate-300 hover:scale-125 transition cursor-pointer" onclick="setPlatRating(1)" onmouseenter="previewPlatRating(1)">★</button>
+                            <button type="button" class="star-plat text-xl text-slate-300 hover:scale-125 transition cursor-pointer" onclick="setPlatRating(2)" onmouseenter="previewPlatRating(2)">★</button>
+                            <button type="button" class="star-plat text-xl text-slate-300 hover:scale-125 transition cursor-pointer" onclick="setPlatRating(3)" onmouseenter="previewPlatRating(3)">★</button>
+                            <button type="button" class="star-plat text-xl text-slate-300 hover:scale-125 transition cursor-pointer" onclick="setPlatRating(4)" onmouseenter="previewPlatRating(4)">★</button>
+                            <button type="button" class="star-plat text-xl text-slate-300 hover:scale-125 transition cursor-pointer" onclick="setPlatRating(5)" onmouseenter="previewPlatRating(5)">★</button>
                         </div>
                     </div>
-                    <input type="hidden" id="feedback-platform-rating" value="5">
+                    <input type="hidden" id="feedback-platform-rating" value="0">
                     <textarea id="feedback-platform-review" rows="2"
-                        placeholder="Emergency me website ne kitna fast help kiya? Report parsing aur Google Maps ka route asani se mila?..."
+                        placeholder="How helpful and fast was the website during emergency? Was report parsing and Google Maps route easy to use?..."
                         class="w-full bg-white border border-blue-200 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"></textarea>
                 </div>
 

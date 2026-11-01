@@ -1196,17 +1196,33 @@ function setupDropZone() {
 // ==============================================================================
 // PATIENT & CAREGIVER FEEDBACK CONTROLLER (DOCTOR & PLATFORM)
 // ==============================================================================
-let currentDocRating = 5;
-let currentPlatRating = 5;
+let currentDocRating = 0;
+let currentPlatRating = 0;
 
 function setDocRating(n) {
     currentDocRating = n;
     const input = document.getElementById('feedback-doctor-rating');
     if (input) input.value = n;
+    restoreDocStars();
+}
 
+function previewDocRating(n) {
     const stars = document.querySelectorAll('.star-doc');
     stars.forEach((s, idx) => {
         if (idx < n) {
+            s.classList.remove('text-slate-300');
+            s.classList.add('text-amber-400');
+        } else {
+            s.classList.remove('text-amber-400');
+            s.classList.add('text-slate-300');
+        }
+    });
+}
+
+function restoreDocStars() {
+    const stars = document.querySelectorAll('.star-doc');
+    stars.forEach((s, idx) => {
+        if (idx < currentDocRating) {
             s.classList.remove('text-slate-300');
             s.classList.add('text-amber-400');
         } else {
@@ -1220,10 +1236,26 @@ function setPlatRating(n) {
     currentPlatRating = n;
     const input = document.getElementById('feedback-platform-rating');
     if (input) input.value = n;
+    restorePlatStars();
+}
 
+function previewPlatRating(n) {
     const stars = document.querySelectorAll('.star-plat');
     stars.forEach((s, idx) => {
         if (idx < n) {
+            s.classList.remove('text-slate-300');
+            s.classList.add('text-amber-400');
+        } else {
+            s.classList.remove('text-amber-400');
+            s.classList.add('text-slate-300');
+        }
+    });
+}
+
+function restorePlatStars() {
+    const stars = document.querySelectorAll('.star-plat');
+    stars.forEach((s, idx) => {
+        if (idx < currentPlatRating) {
             s.classList.remove('text-slate-300');
             s.classList.add('text-amber-400');
         } else {
@@ -1265,8 +1297,9 @@ function openFeedbackModal() {
         tokenInput.value = AppState.bookedAppointment.id;
     }
 
-    setDocRating(5);
-    setPlatRating(5);
+    // Keep stars initially unselected / empty (Requested by User)
+    setDocRating(0);
+    setPlatRating(0);
 
     modal.classList.remove('hidden');
     loadRecentFeedbacks();
@@ -1284,6 +1317,17 @@ function openFeedbackModalFromAppointment() {
 
 async function handleFeedbackSubmit(e) {
     e.preventDefault();
+
+    if (!currentDocRating || currentDocRating === 0) {
+        showToast('Please select Doctor Treatment Rating (1 to 5 stars)', 'warning');
+        return;
+    }
+
+    if (!currentPlatRating || currentPlatRating === 0) {
+        showToast('Please select Website Experience Rating (1 to 5 stars)', 'warning');
+        return;
+    }
+
     const btn = document.getElementById('feedback-submit-btn');
     if (btn) {
         btn.disabled = true;
@@ -1296,9 +1340,9 @@ async function handleFeedbackSubmit(e) {
             appointmentId: document.getElementById('feedback-token').value.trim() || null,
             doctorId: AppState.selectedDoctor ? AppState.selectedDoctor.id : null,
             doctorName: document.getElementById('feedback-doctor-name').value.trim(),
-            doctorRating: parseInt(document.getElementById('feedback-doctor-rating').value) || 5,
+            doctorRating: currentDocRating,
             doctorReview: document.getElementById('feedback-doctor-review').value.trim(),
-            platformRating: parseInt(document.getElementById('feedback-platform-rating').value) || 5,
+            platformRating: currentPlatRating,
             platformReview: document.getElementById('feedback-platform-review').value.trim()
         };
 
