@@ -1,0 +1,899 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | Emergency Medical Report Parser & Specialist Network</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Leaflet.js CSS for GIS Emergency Navigation -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- Custom Light Medical Dashboard Styles -->
+    <link rel="stylesheet" href="css/custom.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%3E<text y=%2226%22 font-size=%2228%22>🩺</text></svg>">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased">
+
+    <!-- ============================================================================== -->
+    <!-- 1. SIGN IN SCREEN (SIMPLE & CLEAN MEDICAL WHITE CARD) -->
+    <!-- ============================================================================== -->
+    <div id="auth-screen" class="min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 bg-slate-50">
+        
+        <!-- Clean Centered Sign-In Card (Comfortable on Laptop & Mobile) -->
+        <div class="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-xl p-6 sm:p-8 space-y-5 my-auto">
+            
+            <!-- Logo & Header -->
+            <div class="text-center space-y-1.5">
+                <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl shadow-md mx-auto mb-2">
+                    🩺
+                </div>
+                <h2 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-snug">Emergency Medical Report Parser & Specialist Network</h2>
+            </div>
+
+            <!-- Sign In Form (Login ID & Password) -->
+            <form onsubmit="handleUserSignIn(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Login ID / Email or Phone</label>
+                    <input type="text" id="signin-email" value=""
+                        placeholder="Enter your login ID, email, or phone..."
+                        class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Password</label>
+                    <input type="password" id="signin-password" value=""
+                        placeholder="Enter password..."
+                        class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition">
+                </div>
+
+                <button type="submit"
+                    class="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition flex items-center justify-center space-x-1.5 cursor-pointer">
+                    <span>Sign In to Dashboard</span>
+                </button>
+            </form>
+
+            <!-- Subtle Divider -->
+            <div class="relative flex py-1 items-center">
+                <div class="flex-grow border-t border-slate-200"></div>
+                <span class="flex-shrink mx-3 text-[11px] font-bold uppercase text-slate-400">or</span>
+                <div class="flex-grow border-t border-slate-200"></div>
+            </div>
+
+            <!-- Simplified Continue as Guest Tab (Placed Below Login ID & Password) -->
+            <div>
+                <button type="button" onclick="continueAsGuest()"
+                    class="w-full py-2.5 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-bold text-xs transition flex items-center justify-center space-x-2 cursor-pointer shadow-xs">
+                    <span>Continue as Guest</span>
+                    <span class="text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">Emergency Mode</span>
+                </button>
+                <span class="block text-center text-[11px] text-slate-400 mt-1 font-medium">Instant triage with no password required</span>
+            </div>
+
+            <!-- Bottom SOS Hotline -->
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                <span>Emergency SOS:</span>
+                <a href="tel:108" class="text-red-600 font-bold hover:underline">🚨 Dial 108 / 112</a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ============================================================================== -->
+    <!-- 2. MAIN DASHBOARD SCREEN (STEPS 1 THROUGH 4 WITH LEFT-HAND SIDEBAR) -->
+    <!-- ============================================================================== -->
+    <div id="dashboard-screen" class="hidden min-h-screen flex flex-col lg:flex-row flex-1">
+
+        <!-- ============================================================================== -->
+        <!-- LEFT-HAND SIDEBAR DASHBOARD (STEPS 1 THROUGH 4) -->
+        <!-- ============================================================================== -->
+        <aside class="w-full lg:w-80 bg-white border-r border-slate-200 flex flex-col justify-between p-6 shadow-sm z-30 flex-shrink-0">
+            <div>
+                <!-- Brand Title & Emergency Badge -->
+                <div class="flex items-center space-x-3 pb-6 border-b border-slate-100">
+                    <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-1.5 mb-0.5">
+                            <span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-red-100 text-red-700">EMERGENCY NETWORK</span>
+                        </div>
+                        <h1 class="text-xs font-bold text-slate-900 leading-tight">Emergency Medical Report Parser & Specialist Network</h1>
+                    </div>
+                </div>
+
+                <!-- Current User Profile Pill -->
+                <div class="mt-4 p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center space-x-2 min-w-0">
+                        <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center flex-shrink-0" id="sidebar-user-avatar">
+                            👤
+                        </div>
+                        <div class="min-w-0">
+                            <span class="block text-xs font-bold text-slate-900 truncate" id="sidebar-user-display">Guest Caregiver</span>
+                            <span class="block text-[10px] text-emerald-600 font-semibold" id="sidebar-user-role">Emergency Mode Active</span>
+                        </div>
+                    </div>
+                    <button type="button" onclick="userSignOut()" title="Sign out" class="text-[11px] text-slate-400 hover:text-red-600 font-bold px-1.5 py-0.5 rounded hover:bg-slate-100 transition">
+                        Exit
+                    </button>
+                </div>
+
+                <!-- Vertical Steps 1 Through 4 in Dashboard -->
+                <div class="mt-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">TRIAGE WORKFLOW</span>
+                        <span class="text-[10px] font-bold text-blue-600">STEPS 1 - 4</span>
+                    </div>
+
+                    <nav class="space-y-4" aria-label="Triage Steps">
+                        <!-- Step 1 in Sidebar -->
+                        <button type="button" id="step-nav-1" onclick="goToStep(1)" class="step-item w-full flex items-start space-x-3.5 text-left p-2.5 rounded-xl transition hover:bg-slate-50 group focus:outline-none">
+                            <div id="step-circle-1" class="step-circle w-10 h-10 rounded-full border-2 border-blue-600 bg-blue-600 text-white font-bold text-sm flex items-center justify-center flex-shrink-0 shadow-sm active">
+                                1
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <span id="step-title-1" class="block text-sm font-bold text-blue-600">1. Upload / Symptoms</span>
+                                <span id="step-sub-1" class="block text-xs text-slate-500 truncate">Report intake & test inputs</span>
+                            </div>
+                        </button>
+
+                        <!-- Step 2 in Sidebar -->
+                        <button type="button" id="step-nav-2" onclick="goToStep(2)" class="step-item w-full flex items-start space-x-3.5 text-left p-2.5 rounded-xl transition hover:bg-slate-50 group focus:outline-none">
+                            <div id="step-circle-2" class="step-circle w-10 h-10 rounded-full border-2 border-slate-200 bg-white text-slate-500 font-bold text-sm flex items-center justify-center flex-shrink-0 inactive">
+                                2
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <span id="step-title-2" class="block text-sm font-semibold text-slate-700">2. Report Summary</span>
+                                <span id="step-sub-2" class="block text-xs text-slate-400 truncate">Biomarkers & plain layman text</span>
+                            </div>
+                        </button>
+
+                        <!-- Step 3 in Sidebar -->
+                        <button type="button" id="step-nav-3" onclick="goToStep(3)" class="step-item w-full flex items-start space-x-3.5 text-left p-2.5 rounded-xl transition hover:bg-slate-50 group focus:outline-none">
+                            <div id="step-circle-3" class="step-circle w-10 h-10 rounded-full border-2 border-slate-200 bg-white text-slate-500 font-bold text-sm flex items-center justify-center flex-shrink-0 inactive">
+                                3
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <span id="step-title-3" class="block text-sm font-semibold text-slate-700">3. Show Right Specialist</span>
+                                <span id="step-sub-3" class="block text-xs text-slate-400 truncate">Anti-misdirection & verified doctors</span>
+                            </div>
+                        </button>
+
+                        <!-- Step 4 in Sidebar -->
+                        <button type="button" id="step-nav-4" onclick="goToStep(4)" class="step-item w-full flex items-start space-x-3.5 text-left p-2.5 rounded-xl transition hover:bg-slate-50 group focus:outline-none">
+                            <div id="step-circle-4" class="step-circle w-10 h-10 rounded-full border-2 border-slate-200 bg-white text-slate-500 font-bold text-sm flex items-center justify-center flex-shrink-0 inactive">
+                                4
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <span id="step-title-4" class="block text-sm font-semibold text-slate-700">4. Proceed to Call</span>
+                                <span id="step-sub-4" class="block text-xs text-slate-400 truncate">Direct dial & WhatsApp SOS</span>
+                            </div>
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Patient & Urgency Snapshot Card in Sidebar -->
+                <div id="sidebar-status-box" class="mt-6 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-2 hidden">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 font-bold uppercase text-[10px]">LIVE CASE STATUS</span>
+                        <span id="sidebar-triage-badge" class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-red-100 text-red-700">CODE RED</span>
+                    </div>
+                    <div class="font-bold text-slate-900 truncate" id="sidebar-patient-name">Patient</div>
+                    <div class="text-blue-700 font-semibold text-[11px] truncate" id="sidebar-matched-spec">Interventional Cardiology</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ============================================================================== -->
+        <!-- RIGHT-HAND MAIN DASHBOARD WORKSPACE -->
+        <!-- ============================================================================== -->
+        <div class="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-y-auto">
+
+            <!-- Top Dashboard Bar -->
+            <div class="bg-white border-b border-slate-200 px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                <div>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider" id="topbar-step-sub">STEP 1 OF 4</span>
+                    <h2 class="text-lg font-extrabold text-slate-900" id="topbar-step-title">Upload Medical Report or Enter Symptoms</h2>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button type="button" onclick="userSignOut()" class="text-xs font-semibold text-slate-500 hover:text-red-600 border border-slate-200 bg-white px-3 py-1.5 rounded-lg hover:bg-slate-50 transition cursor-pointer">
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content Container for Current Step -->
+            <main class="flex-1 max-w-4xl w-full mx-auto p-6 sm:p-8">
+
+                <!-- ============================================================================== -->
+                <!-- STEP 1: UPLOAD REPORT OR ENTER SYMPTOMS -->
+                <!-- ============================================================================== -->
+                <section id="step-view-1" class="step-view space-y-6">
+
+                    <!-- Title & Subtitle -->
+                    <div class="max-w-2xl">
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200">
+                            Diagnostic Intake
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Upload Diagnostic Report or Enter Symptoms</h2>
+                        <p class="text-sm text-slate-600 mt-1.5">
+                            Upload a lab report image (JPG, PNG) or PDF, or enter patient symptoms and test values directly.
+                        </p>
+                    </div>
+
+                    <!-- 1-Click Demo Presets -->
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500">⚡ 1-Click Demo Presets (Instant College Presentation Testing):</span>
+                            <span class="text-[11px] text-blue-600 font-semibold">Click to test instantly</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
+                            <button type="button" onclick="loadSamplePreset('cardiac')" class="text-left p-3 rounded-xl border border-red-200 bg-red-50/50 hover:bg-red-50 text-slate-800 transition">
+                                <span class="block text-xs font-bold text-red-700">🚨 Heart Attack (STEMI)</span>
+                                <span class="text-[11px] text-slate-500">Troponin-I: 2.45 ng/mL</span>
+                            </button>
+                            <button type="button" onclick="loadSamplePreset('renal')" class="text-left p-3 rounded-xl border border-amber-200 bg-amber-50/50 hover:bg-amber-50 text-slate-800 transition">
+                                <span class="block text-xs font-bold text-amber-800">🚨 Kidney Failure (AKI)</span>
+                                <span class="text-[11px] text-slate-500">Creatinine: 4.8 mg/dL</span>
+                            </button>
+                            <button type="button" onclick="loadSamplePreset('dengue')" class="text-left p-3 rounded-xl border border-purple-200 bg-purple-50/50 hover:bg-purple-50 text-slate-800 transition">
+                                <span class="block text-xs font-bold text-purple-800">🚨 Dengue Bleed Alert</span>
+                                <span class="text-[11px] text-slate-500">Platelets: 16,000 /uL</span>
+                            </button>
+                            <button type="button" onclick="loadSamplePreset('routine')" class="text-left p-3 rounded-xl border border-emerald-200 bg-emerald-50/50 hover:bg-emerald-50 text-slate-800 transition">
+                                <span class="block text-xs font-bold text-emerald-800">🟢 Normal Routine Check</span>
+                                <span class="text-[11px] text-slate-500">All tests within range</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Main Input Card (Upload & Text Area) -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-6">
+
+                        <!-- Patient Name Input -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Patient Name / Identifier</label>
+                            <input type="text" id="patient-name-input" value=""
+                                placeholder="Enter patient name..."
+                                class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition">
+                        </div>
+
+                        <!-- Drag & Drop File Upload Box -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Option A: Upload Report Image or PDF</label>
+                            <div id="drop-zone" class="border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-xl p-6 text-center cursor-pointer transition bg-slate-50/50 hover:bg-blue-50/30 flex flex-col items-center justify-center space-y-2">
+                                <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                    </svg>
+                                </div>
+                                <div class="text-sm font-semibold text-slate-800">
+                                    <span class="text-blue-600">Click to upload report</span> or drag & drop file
+                                </div>
+                                <p class="text-xs text-slate-500">Supports PNG, JPG, PDF, or text lab reports</p>
+                                <input type="file" id="report-file-input" class="hidden" accept=".png,.jpg,.jpeg,.pdf,.txt">
+                            </div>
+                            <div id="selected-file-label" class="text-xs font-semibold text-emerald-600 mt-2 truncate"></div>
+                        </div>
+
+                        <!-- Text Area for Symptoms & Numbers -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Option B: Or Enter Symptoms & Test Findings</label>
+                            <textarea id="raw-text-input" rows="6"
+                                placeholder="Type symptoms or paste lab numbers here...
+Example:
+Patient having severe chest pain radiating to left arm.
+High-Sensitivity Troponin-I: 2.45 ng/mL
+Serum Creatinine: 0.95 mg/dL"
+                                class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3.5 text-sm font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition leading-relaxed"></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="pt-2">
+                            <button type="button" onclick="executeStep1To2()" id="analyze-btn"
+                                class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition flex items-center justify-center space-x-2 cursor-pointer">
+                                <span id="analyze-spinner" class="hidden animate-spin">⟳</span>
+                                <span>Analyse Report & Generate Summary →</span>
+                            </button>
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <!-- ============================================================================== -->
+                <!-- STEP 2: ANALYSE THE REPORT AND GENERATE THE SUMMARY -->
+                <!-- ============================================================================== -->
+                <section id="step-view-2" class="step-view hidden space-y-6">
+
+                    <!-- Title & Subtitle -->
+                    <div class="max-w-2xl">
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200">
+                            Diagnostic Analysis
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Report Analysis & Decoded Summary</h2>
+                        <p class="text-sm text-slate-600 mt-1.5">
+                            Our clinical engine decoded the test values into plain language to eliminate confusion and panic.
+                        </p>
+                    </div>
+
+                    <!-- Dynamic Severity Banner Container -->
+                    <div id="step-2-severity-banner">
+                        <!-- Injected dynamically: Red / Yellow / Green Alert -->
+                    </div>
+
+                    <!-- Decoded Biomarkers List -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h3 class="text-base font-bold text-slate-900 flex items-center space-x-2">
+                                <span class="text-blue-600">📊</span>
+                                <span>Key Diagnostic Findings Explained in Simple English</span>
+                            </h3>
+                            <span class="text-xs font-medium text-slate-500">Values vs Biological Reference Range</span>
+                        </div>
+
+                        <div id="step-2-biomarkers-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Plain-Language Summary Box -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-3">
+                        <div class="flex items-center space-x-2 text-slate-900 font-bold text-sm">
+                            <span class="text-emerald-600">💡</span>
+                            <span>What This Means for the Family (Layman Guidance)</span>
+                        </div>
+                        <p id="step-2-layman-summary" class="text-sm text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200 font-medium">
+                            <!-- Populated dynamically -->
+                        </p>
+                    </div>
+
+                    <!-- Step Navigation Buttons -->
+                    <div class="flex items-center justify-between pt-2">
+                        <button type="button" onclick="goToStep(1)" class="px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer">
+                            ← Back
+                        </button>
+                        <button type="button" onclick="goToStep(3)" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition flex items-center space-x-1.5 shadow-sm cursor-pointer">
+                            <span>Show Right Specialist</span>
+                            <span>→</span>
+                        </button>
+                    </div>
+
+                </section>
+
+                <!-- ============================================================================== -->
+                <!-- STEP 3: SHOW RIGHT SPECIALIST -->
+                <!-- ============================================================================== -->
+                <section id="step-view-3" class="step-view hidden space-y-6">
+
+                    <!-- Title & Subtitle -->
+                    <div class="max-w-2xl">
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200">
+                            Specialist Matchmaking & Anti-Misdirection
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Right Specialist Match</h2>
+                        <p class="text-sm text-slate-600 mt-1.5">
+                            We match the exact authorized medical field and explicitly warn against unequipped or incorrect clinics.
+                        </p>
+                    </div>
+
+                    <!-- ANTI-MISDIRECTION WARNING CARD (CORE DT INNOVATION) -->
+                    <div class="bg-red-50 border-2 border-red-200 rounded-2xl p-6 shadow-xs space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center flex-shrink-0 font-bold text-lg">
+                                ✕
+                            </div>
+                            <div>
+                                <span class="text-xs font-black uppercase tracking-wider text-red-700">ANTI-MISDIRECTION CLINICAL WARNING</span>
+                                <h3 class="text-lg font-extrabold text-red-900 mt-0.5">DO NOT CONSULT THESE WRONG DOCTOR FIELDS</h3>
+                                <div id="step-3-wrong-doctors-list" class="flex flex-wrap gap-2 mt-2">
+                                    <!-- Injected dynamically -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-white border border-red-200 text-xs text-red-800 leading-relaxed font-medium">
+                            <strong class="text-red-900">Why It is Dangerous:</strong>
+                            <span id="step-3-danger-explanation">
+                                <!-- Injected dynamically -->
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT SPECIALIST CARD -->
+                    <div class="bg-white rounded-2xl border-2 border-blue-600 shadow-md p-6 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                            <div class="flex items-center space-x-2.5">
+                                <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-sm">✓</div>
+                                <div>
+                                    <span class="text-xs font-bold uppercase text-emerald-600">CORRECT AUTHORIZED SPECIALTY REQUIRED</span>
+                                    <h3 id="step-3-specialty-title" class="text-xl font-extrabold text-slate-900">Interventional Cardiology</h3>
+                                </div>
+                            </div>
+                            <div class="px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold font-mono">
+                                Golden Window: <span id="step-3-golden-window">60</span> Mins
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                <span class="text-slate-500 font-semibold block">Required Board Degree</span>
+                                <span id="step-3-specialty-degree" class="text-slate-900 font-bold text-sm">DM / DNB Cardiology, FACC</span>
+                            </div>
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                <span class="text-slate-500 font-semibold block">Mandatory Hospital Facility</span>
+                                <span class="text-slate-900 font-bold text-sm">24/7 Cath Lab & Level 1 ICU</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LIST OF NEARBY VERIFIED DOCTORS -->
+                    <div class="space-y-3">
+                        <h3 class="text-base font-bold text-slate-900 flex items-center space-x-2">
+                            <span>👨‍⚕️</span> <span>Verified Specialists Nearby with Active License</span>
+                        </h3>
+                        <div id="step-3-doctors-list" class="space-y-3">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Step Navigation Buttons -->
+                    <div class="flex items-center justify-between pt-2">
+                        <button type="button" onclick="goToStep(2)" class="px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer">
+                            ← Back
+                        </button>
+                        <button type="button" onclick="goToStep(4)" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition flex items-center space-x-1.5 shadow-sm cursor-pointer">
+                            <span>Proceed to Call</span>
+                            <span>→</span>
+                        </button>
+                    </div>
+
+                </section>
+
+                <!-- ============================================================================== -->
+                <!-- STEP 4: CALL IT / MESSAGE -->
+                <!-- ============================================================================== -->
+                <section id="step-view-4" class="step-view hidden space-y-6">
+
+                    <!-- Title & Subtitle -->
+                    <div class="max-w-2xl">
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200">
+                            Emergency Action Center
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Call Specialist or Send Emergency Message</h2>
+                        <p class="text-sm text-slate-600 mt-1.5">
+                            Connect directly with the authorized emergency department or broadcast a pre-filled SOS card to your family.
+                        </p>
+                    </div>
+
+                    <!-- Immediate Call & Book Appointment Card -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="space-y-1">
+                                <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Selected Facility for Direct Admission</span>
+                                <h3 id="step-4-hospital-name" class="text-xl font-black text-slate-900">Apex Critical Care & Heart Institute</h3>
+                                <p id="step-4-doctor-info" class="text-xs text-slate-600 font-medium">Matched Specialist: Dr. Vikramaditya Rathore (DM Cardiology)</p>
+                                <p id="step-4-hospital-address" class="text-xs text-slate-500 font-medium">Healthcare Boulevard, Metro</p>
+                                <p id="step-4-hospital-phone-row" class="text-xs font-semibold text-slate-700 mt-1 flex items-center space-x-1.5">
+                                    <span>📞 Direct Line / Hotline:</span>
+                                    <strong id="step-4-phone-display" class="font-mono text-blue-700 font-bold">+91-20-8000-9911</strong>
+                                </p>
+                                <p id="step-4-hospital-beds" class="text-xs font-bold text-emerald-600 mt-0.5">● 6 / 28 ICU Beds Ready • 24/7 Cath Lab Active</p>
+                            </div>
+
+                            <!-- Direct Action Buttons: Call & Book Appointment -->
+                            <div class="flex flex-col sm:flex-row gap-2.5">
+                                <button type="button" onclick="openBookingModalForSelected()"
+                                    class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 flex items-center justify-center space-x-1.5 transition text-center cursor-pointer">
+                                    <span>📅</span>
+                                    <span>Book Appointment</span>
+                                </button>
+                                <a id="step-4-call-btn" href="tel:+912080009911"
+                                    class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/20 flex items-center justify-center space-x-1.5 transition text-center cursor-pointer">
+                                    <span>🚨</span>
+                                    <span>SOS Emergency Call</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Active Appointment Badge (If Booked) -->
+                        <div id="step-4-appointment-ticket" class="hidden p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 text-xs text-emerald-900 flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-base">🎟️</span>
+                                <div>
+                                    <strong class="block">Appointment Confirmed: <span id="step-4-ticket-id">APT-2026-0001</span></strong>
+                                    <span id="step-4-ticket-slot" class="text-emerald-700 font-medium">Slot: Today at 10:30 AM</span>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white uppercase">CONFIRMED</span>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp Message Broadcast Box -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-emerald-600 text-lg">💬</span>
+                                <h4 class="text-base font-bold text-slate-900">Pre-Formatted Emergency WhatsApp / SMS Message</h4>
+                            </div>
+                            <span class="text-xs text-slate-500">Ready to broadcast to family</span>
+                        </div>
+
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 font-mono text-xs text-slate-800 whitespace-pre-wrap leading-relaxed select-all" id="step-4-message-preview">
+🚨 *EMERGENCY MEDICAL TRIAGE ALERT*
+Patient: Emergency Patient
+Urgency: CRITICAL (CODE RED)
+Required Specialty: Interventional Cardiology
+
+⚠️ Critical Finding: Diagnostic abnormality detected
+🏥 Recommended Hospital: Apex Critical Care & Heart Institute
+📞 Emergency Contact: +91-20-8000-9911
+📍 Navigation: https://maps.google.com/?q=18.52043,73.85674
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                            <a id="step-4-wa-btn" href="#" target="_blank"
+                                class="flex-1 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-center text-sm shadow-md shadow-emerald-600/20 transition flex items-center justify-center space-x-2">
+                                <span>📱 Send via WhatsApp to Family / Group</span>
+                            </a>
+                            <button type="button" onclick="copyEmergencyMessage()"
+                                class="px-5 py-3.5 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-bold rounded-xl text-sm transition">
+                                📋 Copy Message
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Real Google Map & Directions -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                                <h4 class="text-base font-bold text-slate-900 flex items-center space-x-2">
+                                    <span>🗺️</span> <span>Real-Time GPS Route to Hospital</span>
+                                </h4>
+                                <p id="step-4-distance-text" class="text-xs text-slate-500 mt-0.5">
+                                    Distance: ~3.2 km • Estimated Travel Time: ~12 Mins
+                                </p>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button type="button" onclick="refreshUserGpsLocation()" class="px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer flex items-center space-x-1">
+                                    <span>🔄 Refresh GPS</span>
+                                </button>
+                                <a id="step-4-gmaps-link" href="https://maps.google.com" target="_blank"
+                                    class="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition flex items-center space-x-1.5 cursor-pointer">
+                                    <span>📍</span>
+                                    <span>Get Location</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Live GPS Notice Bar -->
+                        <div id="step-4-gps-alert-bar" class="p-3 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-900 flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                                <span id="step-4-gps-text">Live GPS active. Showing Google Map route to hospital.</span>
+                            </div>
+                            <span class="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">REAL GOOGLE MAP</span>
+                        </div>
+
+                        <!-- Real Embedded Google Map Box (Direct Clickable Box) -->
+                        <a id="step-4-map-click-box" href="https://maps.google.com" target="_blank"
+                            class="block relative rounded-2xl overflow-hidden border border-slate-300 shadow-sm hover:border-blue-500 hover:shadow-lg transition group cursor-pointer">
+                            <iframe id="step-4-gmap-iframe"
+                                src="about:blank"
+                                class="w-full h-80 border-0 pointer-events-none"
+                                allowfullscreen=""
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+
+                            <!-- Floating Map Badge Overlay (Click anywhere to navigate) -->
+                            <div class="absolute inset-0 bg-transparent hover:bg-blue-900/10 transition flex flex-col justify-between p-3.5 z-10 pointer-events-none">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-3 py-1.5 rounded-xl bg-white/95 text-slate-900 font-bold text-xs shadow-md border border-slate-200 flex items-center space-x-1.5 backdrop-blur-xs">
+                                        <span>🏥</span> <span id="step-4-overlay-hospital-name">Target Hospital</span>
+                                    </span>
+                                    <span class="px-3 py-1.5 rounded-xl bg-blue-600 text-white font-bold text-xs shadow-md flex items-center space-x-1">
+                                        <span>📍 Get Location (Google Maps) ↗</span>
+                                    </span>
+                                </div>
+                                <div class="self-center">
+                                    <span class="opacity-0 group-hover:opacity-100 transition duration-200 px-4 py-2 rounded-xl bg-slate-900/90 text-white font-bold text-xs shadow-xl backdrop-blur-xs flex items-center space-x-2">
+                                        <span>🗺️ Click anywhere on this Google Map to open Navigation</span>
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2.5 py-1 rounded-lg bg-white/90 text-slate-700 font-semibold text-[11px] shadow-xs border border-slate-200" id="step-4-overlay-dist-text">
+                                        Distance: ~2.9 km • ~10 mins
+                                    </span>
+                                    <span class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] shadow-xs">
+                                        ● Live Real Google Map
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Finish / Restart Button -->
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-200">
+                        <button type="button" onclick="goToStep(3)" class="px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer">
+                            ← Back
+                        </button>
+                        <button type="button" onclick="goToStep(1)" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-sm transition flex items-center space-x-1.5 cursor-pointer">
+                            <span>Parse Another Report</span>
+                            <span>→</span>
+                        </button>
+                    </div>
+
+                </section>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- ============================================================================== -->
+    <!-- APPOINTMENT BOOKING MODAL -->
+    <!-- ============================================================================== -->
+    <div id="booking-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-auto transform transition-all animate-fadeIn">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white flex items-center justify-between">
+                <div class="flex items-center space-x-2.5">
+                    <span class="text-xl">📅</span>
+                    <div>
+                        <h3 class="text-base font-bold leading-tight">Book Doctor Appointment & Hospital Route</h3>
+                        <p class="text-[11px] text-blue-100">Live Hospital Admission & Direct Doctor Consult</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeBookingModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-sm font-bold transition cursor-pointer">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Modal Body (Form View) -->
+            <div id="booking-modal-form-view" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+                <!-- Selected Doctor Snapshot Card -->
+                <div class="p-4 rounded-xl bg-blue-50 border border-blue-200 flex items-start space-x-3.5">
+                    <div class="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg flex-shrink-0 shadow-sm">
+                        👨‍⚕️
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center space-x-2">
+                            <h4 id="modal-doc-name" class="text-sm font-bold text-slate-900">Dr. Specialist Name</h4>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">NMC VERIFIED</span>
+                        </div>
+                        <p id="modal-doc-spec" class="text-xs text-blue-700 font-semibold mt-0.5">Specialty Degree</p>
+                        <p id="modal-doc-hosp" class="text-xs text-slate-600 font-medium mt-1">Hospital Name & Address</p>
+                    </div>
+                </div>
+
+                <!-- Form Fields -->
+                <form onsubmit="handleConfirmAppointment(event)" class="space-y-3.5 text-xs">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Patient Full Name</label>
+                        <input type="text" id="booking-patient-name" required
+                            placeholder="Enter patient full name..."
+                            class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Patient Phone / WhatsApp</label>
+                            <input type="tel" id="booking-patient-phone" required
+                                placeholder="+91 98765 43210"
+                                class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Appointment Date</label>
+                            <input type="date" id="booking-date" required
+                                class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Available Time Slot</label>
+                        <select id="booking-time-slot"
+                            class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition font-semibold">
+                            <option value="⚡ Immediate Emergency (Next 15-20 Mins)">⚡ Immediate Emergency (Next 15-20 Mins)</option>
+                            <option value="Morning: 10:30 AM">Morning: 10:30 AM</option>
+                            <option value="Morning: 11:45 AM">Morning: 11:45 AM</option>
+                            <option value="Afternoon: 02:00 PM">Afternoon: 02:00 PM</option>
+                            <option value="Afternoon: 03:30 PM">Afternoon: 03:30 PM</option>
+                            <option value="Evening: 05:00 PM">Evening: 05:00 PM</option>
+                            <option value="Evening: 06:30 PM">Evening: 06:30 PM</option>
+                            <option value="Night: 08:00 PM">Night: 08:00 PM</option>
+                        </select>
+                    </div>
+
+                    <!-- Live Real GPS Location Detector Box -->
+                    <div id="booking-gps-status-box" class="p-3.5 rounded-xl border border-blue-200 bg-blue-50/70 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-800 flex items-center space-x-1.5">
+                                <span>📍</span> <span>Live GPS Location Status:</span>
+                            </span>
+                            <span id="booking-gps-pill" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                Detecting GPS...
+                            </span>
+                        </div>
+                        <p id="booking-gps-detail" class="text-[11px] text-slate-600 leading-snug">
+                            Fetching your live coordinates to map real-time route to hospital...
+                        </p>
+                        <div class="flex items-center space-x-2">
+                            <button type="button" onclick="refreshUserGpsLocation()" class="text-[11px] text-blue-700 hover:text-blue-800 font-bold underline flex items-center space-x-1 cursor-pointer">
+                                <span>🔄 Check / Refresh GPS</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 flex items-center space-x-2.5">
+                        <button type="button" onclick="closeBookingModal()"
+                            class="w-1/3 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold transition cursor-pointer">
+                            Cancel
+                        </button>
+                        <button type="submit" id="booking-submit-btn"
+                            class="w-2/3 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-md shadow-blue-600/20 transition flex items-center justify-center space-x-1.5 cursor-pointer">
+                            <span>✓ Confirm & Get Hospital Route</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Success View (Confirmed Receipt + Route Map) -->
+            <div id="booking-modal-success-view" class="p-6 space-y-4 hidden max-h-[85vh] overflow-y-auto">
+                <div class="p-4 rounded-xl bg-emerald-50 border-2 border-emerald-500 text-center space-y-1">
+                    <span class="text-3xl">🎉</span>
+                    <h3 class="text-base font-extrabold text-emerald-900">Appointment Confirmed!</h3>
+                    <p class="text-xs text-emerald-700 font-medium">Hospital ER desk & doctor notified</p>
+                    <div class="mt-2 inline-block px-3 py-1 rounded-full bg-emerald-600 text-white font-mono text-xs font-bold">
+                        Booking Token: <span id="confirmed-token">APT-2026-0001</span>
+                    </div>
+                    <div class="mt-2 text-[11px] text-emerald-800 font-semibold flex items-center justify-center space-x-1">
+                        <span>☁️</span>
+                        <span>Saved to Supabase Cloud Database (<strong>appointments</strong> table)</span>
+                    </div>
+                </div>
+
+                <!-- Ticket Details -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-2">
+                    <div class="flex justify-between border-b border-slate-200 pb-1.5">
+                        <span class="text-slate-500">Doctor:</span>
+                        <strong id="confirmed-doc" class="text-slate-900">Dr. Name</strong>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-200 pb-1.5">
+                        <span class="text-slate-500">Specialty:</span>
+                        <strong id="confirmed-spec" class="text-blue-700">Specialty</strong>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-200 pb-1.5">
+                        <span class="text-slate-500">Hospital:</span>
+                        <strong id="confirmed-hosp" class="text-slate-900">Hospital</strong>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-200 pb-1.5">
+                        <span class="text-slate-500">Address:</span>
+                        <span id="confirmed-addr" class="text-slate-700 text-right truncate max-w-[200px]">Address</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Date & Slot:</span>
+                        <strong id="confirmed-time" class="text-emerald-700">Today at 10:30 AM</strong>
+                    </div>
+                </div>
+
+                <!-- Hospital Location & Live Route Action -->
+                <div class="p-4 rounded-xl bg-blue-50 border border-blue-200 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-blue-900 flex items-center space-x-1.5">
+                            <span>🗺️</span> <span>Real-Time Route to Hospital</span>
+                        </span>
+                        <span id="confirmed-dist-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-200 text-blue-900">
+                            ~3.2 km away
+                        </span>
+                    </div>
+
+                    <!-- Clickable Google Map Embed in Modal -->
+                    <a id="modal-gmap-click-box" href="#" target="_blank"
+                        class="block relative rounded-xl overflow-hidden border border-slate-300 shadow-xs hover:border-blue-500 hover:shadow-md transition group cursor-pointer">
+                        <iframe id="modal-gmap-iframe"
+                            src="about:blank"
+                            class="w-full h-44 border-0 pointer-events-none"
+                            loading="lazy">
+                        </iframe>
+                        <div class="absolute inset-0 bg-blue-900/0 hover:bg-blue-900/10 transition flex items-center justify-center pointer-events-none">
+                            <span class="opacity-0 group-hover:opacity-100 transition px-3 py-1.5 rounded-lg bg-slate-900/85 text-white font-bold text-[11px] shadow-md backdrop-blur-xs">
+                                🗺️ Click to open live Google Maps
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- Simple Get Location Button (Requested by User) -->
+                    <a id="confirmed-gmaps-btn" href="#" target="_blank"
+                        class="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 flex items-center justify-center space-x-2 transition cursor-pointer text-center">
+                        <span>📍</span>
+                        <span>Get Location</span>
+                    </a>
+                </div>
+
+                <div class="pt-2 flex items-center space-x-2.5">
+                    <button type="button" onclick="closeBookingModal(); goToStep(4);"
+                        class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition flex items-center justify-center space-x-1.5 cursor-pointer">
+                        <span>Go to Step 4 (Proceed to Call & WhatsApp) →</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================================== -->
+    <!-- GPS LOCATION OFF / PERMISSION ALERT MODAL -->
+    <!-- ============================================================================== -->
+    <div id="location-alert-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border-2 border-amber-400 p-6 space-y-4 my-auto animate-fadeIn">
+            <div class="flex items-start space-x-3.5">
+                <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-2xl flex-shrink-0 font-bold">
+                    📍
+                </div>
+                <div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-amber-100 text-amber-800">GPS / LOCATION PERMISSION REQUIRED</span>
+                    <h3 class="text-base font-extrabold text-slate-900 mt-1">Aapka Device Location Band Hai (OFF)</h3>
+                </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 space-y-2 leading-relaxed">
+                <p>
+                    Hospital ka exact real-time rasta aur live distance dekhne ke liye:
+                </p>
+                <ol class="list-decimal list-inside space-y-1 font-semibold text-slate-800">
+                    <li>Apne mobile / laptop ki settings me jakar <strong>Location (GPS) ON</strong> kijiye.</li>
+                    <li>Browser me is website ko <strong>'Allow Location Access'</strong> kijiye.</li>
+                </ol>
+            </div>
+
+            <div class="space-y-2 pt-1">
+                <button type="button" onclick="retryGetRealLocation()"
+                    class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition flex items-center justify-center space-x-1.5 cursor-pointer">
+                    <span>🔄 Maine Location ON Kar Diya - Try Again</span>
+                </button>
+                <a id="location-fallback-gmaps-btn" href="#" target="_blank"
+                    class="w-full py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs transition flex items-center justify-center space-x-1.5 text-center cursor-pointer">
+                    <span>🗺️ Direct Google Maps Me Kholein (GPS App Me Chalu Hoga)</span>
+                </a>
+                <button type="button" onclick="closeLocationAlertModal()"
+                    class="w-full py-2 text-center text-xs text-slate-400 hover:text-slate-600 font-medium cursor-pointer">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Small Floating SOS Button in Bottom-Right Corner of Entire Website -->
+    <a href="tel:108" title="Emergency SOS: Dial 108"
+        class="fixed bottom-4 right-4 z-50 flex items-center space-x-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold text-xs rounded-full shadow-lg shadow-red-600/30 transition border border-white/60 cursor-pointer">
+        <span class="text-xs">🚨</span>
+        <span class="tracking-wider">SOS</span>
+    </a>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- App Logic for 4-Step Dashboard & Auth -->
+    <script src="js/app.js"></script>
+</body>
+</html>

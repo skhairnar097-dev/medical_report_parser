@@ -1,0 +1,24 @@
+================================================================================
+METRO PATHOLOGY & ADVANCED DIAGNOSTICS - EMERGENCY REPORT
+================================================================================
+PATIENT NAME : Ramesh Patel, Age: 58 / M
+REFERRED BY  : Emergency Room Duty Officer
+COLLECTION   : Emergency Stat (02:15 AM)
+STATUS       : CRITICAL RED ALERT
+
+TEST REPORT: CARDIAC PROFILE & EMERGENCY MARKERS
+--------------------------------------------------------------------------------
+Test Parameter                     Observed Value     Biological Reference Unit
+--------------------------------------------------------------------------------
+High-Sensitivity Troponin-I (hs-cTnI) : 2.45          0.00 - 0.04          ng/mL
+D-Dimer Quantitative               : 0.38             0.00 - 0.50          ug/mL FEU
+Serum Creatinine                   : 0.95             0.60 - 1.20          mg/dL
+Hemoglobin                         : 14.2             12.5 - 16.5          g/dL
+Total Leukocyte Count (WBC)        : 9,800            4,000 - 11,000       /uL
+
+DIAGNOSTIC REMARKS & CLINICAL IMPRESSION:
+Critical elevation of Cardiac Troponin-I (> 60x upper limit of normal).
+Strongly diagnostic of Acute Coronary Syndrome (STEMI / NSTEMI).
+IMMEDIATE INTERVENTIONAL CARDIOLOGY CONSULTATION & EMERGENCY ANGIOPLASTY REQUIRED.
+================================================================================
+

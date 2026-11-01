@@ -1,0 +1,23 @@
+================================================================================
+CENTRAL REGIONAL DIAGNOSTIC LABORATORIES - RENAL EMERGENCY PANEL
+================================================================================
+PATIENT NAME : Sunita Sharma, Age: 62 / F
+SAMPLE TYPE  : Venous Serum
+REPORT STATUS: CRITICAL STAT ALERT
+
+KIDNEY FUNCTION TEST (KFT) - EMERGENCY PANEL
+--------------------------------------------------------------------------------
+Test Parameter                     Observed Value     Biological Reference Unit
+--------------------------------------------------------------------------------
+Serum Creatinine                   : 4.80             0.60 - 1.20          mg/dL
+Blood Urea Nitrogen (BUN)          : 88.0             7.0 - 20.0           mg/dL
+Hemoglobin (Hb)                    : 9.80             12.0 - 15.5          g/dL
+Platelet Count                     : 220,000          150,000 - 450,000    /uL
+Total Bilirubin                    : 0.80             0.20 - 1.20          mg/dL
+
+CLINICAL IMPRESSION:
+Severe Acute Kidney Injury (KDIGO Stage 3) / Acute on Chronic Renal Failure.
+Severe nitrogenous retention. High risk of hyperkalemia and acute pulmonary edema.
+Immediate Nephrology critical care review and emergency hemodialysis assessment recommended.
+================================================================================
+

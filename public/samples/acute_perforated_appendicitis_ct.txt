@@ -1,0 +1,17 @@
+================================================================================
+APEX IMAGING & RADIOLOGY SERVICES - EMERGENCY CT REPORT
+================================================================================
+PATIENT NAME : Aarav Joshi, Age: 21 / M
+SCAN TYPE    : CECT WHOLE ABDOMEN & PELVIS
+REFERRED FOR : Acute severe right iliac fossa pain & peritoneal guarding
+
+OBSERVATIONS & RADIOLOGICAL FINDINGS:
+Appendix is dilated measuring 13 mm in outer diameter with mural wall thickening and surrounding peri-appendiceal fat stranding.
+Defect seen in the anti-mesenteric border with localized extraluminal fluid collection and extraluminal air bubbles.
+Total Leukocyte Count (WBC Count): 24,500 /uL with 88% neutrophils.
+
+IMPRESSION:
+Features strongly diagnostic of Acute Perforated Appendicitis with localized peritonitis and abscess formation.
+Requires IMMEDIATE EMERGENCY SURGICAL GASTROENTEROLOGY / LAPAROSCOPIC INTERVENTION.
+================================================================================
+

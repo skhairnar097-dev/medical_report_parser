@@ -1,0 +1,110 @@
+/* Clean Light Medical Dashboard Theme Styles for TriageShield AI */
+
+:root {
+    --primary: #2563eb;
+    --emergency-red: #dc2626;
+    --success-green: #16a34a;
+}
+
+body {
+    background-color: #f8fafc;
+    color: #1e293b;
+}
+
+/* Vertical Stepper styles */
+.step-item {
+    position: relative;
+    transition: all 0.2s ease-in-out;
+}
+
+.step-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 44px;
+    bottom: -16px;
+    width: 2px;
+    background-color: #e2e8f0;
+    z-index: 1;
+}
+
+.step-item.completed:not(:last-child)::after {
+    background-color: #16a34a;
+}
+
+.step-circle {
+    position: relative;
+    z-index: 2;
+    transition: all 0.2s ease-in-out;
+}
+
+.step-circle.active {
+    background-color: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+}
+
+.step-circle.completed {
+    background-color: #16a34a;
+    color: #ffffff;
+    border-color: #16a34a;
+}
+
+.step-circle.inactive {
+    background-color: #ffffff;
+    color: #64748b;
+    border-color: #cbd5e1;
+}
+
+/* Radar & Pulse animations for light theme */
+@keyframes pulse-radar-light {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+    }
+}
+
+.radar-emergency-light {
+    animation: pulse-radar-light 2s infinite;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Leaflet Map overrides for light theme */
+.leaflet-container {
+    font-family: inherit;
+    background: #e2e8f0;
+}
+.leaflet-popup-content-wrapper {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid #e2e8f0 !important;
+}
+.leaflet-popup-tip {
+    background: #ffffff !important;
+}

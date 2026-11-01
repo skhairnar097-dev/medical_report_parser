@@ -1,0 +1,23 @@
+================================================================================
+PRIME DIAGNOSTIC & MOLECULAR PATH LAB - EMERGENCY HEMOGRAM
+================================================================================
+PATIENT NAME : Kunal Deshmukh, Age: 29 / M
+CLINICAL INDICATION: Acute Febrile Illness Day 5 / Dengue NS1 Positive
+REPORT STATUS: CRITICAL IMMEDIATE ALERT
+
+COMPLETE BLOOD PICTURE (CBC / HEMOGRAM)
+--------------------------------------------------------------------------------
+Test Parameter                     Observed Value     Biological Reference Unit
+--------------------------------------------------------------------------------
+Total Platelet Count               : 16,000           150,000 - 450,000    /uL
+Hemoglobin                         : 16.8             13.0 - 17.0          g/dL
+Hematocrit (PCV)                   : 48.5             40.0 - 50.0          %
+Total Leukocyte Count (WBC)        : 2,800            4,000 - 11,000       /uL
+Serum Creatinine                   : 0.85             0.70 - 1.20          mg/dL
+
+ALERT NOTIFICATION:
+CRITICAL LOW PLATELET COUNT (< 20,000 /uL). High danger of spontaneous systemic and intracranial bleeding.
+Patient requires immediate inpatient admission under Clinical Hematology
+and urgent Single Donor Apheresis Platelet (SDP) transfusion.
+================================================================================
+

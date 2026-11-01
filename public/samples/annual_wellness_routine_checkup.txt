@@ -1,0 +1,23 @@
+================================================================================
+METRO HEALTHCARE PREVENTIVE CLINIC - ANNUAL WELLNESS
+================================================================================
+PATIENT NAME : Priya Verma, Age: 34 / F
+PACKAGE      : Comprehensive Annual Executive Screening
+REPORT STATUS: NORMAL / STABLE
+
+TEST PARAMETERS:
+--------------------------------------------------------------------------------
+Test Parameter                     Observed Value     Biological Reference Unit
+--------------------------------------------------------------------------------
+High-Sensitivity Troponin-I        : 0.01             0.00 - 0.04          ng/mL
+Serum Creatinine                   : 0.80             0.60 - 1.20          mg/dL
+Total Platelet Count               : 285,000          150,000 - 450,000    /uL
+Hemoglobin                         : 13.5             12.0 - 15.5          g/dL
+Total Leukocyte Count (WBC)        : 6,400            4,000 - 11,000       /uL
+D-Dimer Quantitative               : 0.15             0.00 - 0.50          ug/mL FEU
+Total Bilirubin                    : 0.60             0.20 - 1.20          mg/dL
+
+SUMMARY:
+All organ biomarkers within physiological limits. No emergency flags detected.
+================================================================================
+
